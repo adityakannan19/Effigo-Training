@@ -35,9 +35,27 @@ public class LearningPortalController {
 	@Autowired
 	private FavoriteService favoriteService;
 
-	@GetMapping("/try")
-	public List<UserDTO> getAllUsers() {
-		return userService.getAllUsers();
+	//@PreAuthorize("hasRole('AUTHOR')")
+	@PostMapping("/author/createCourse")
+	public ResponseEntity<String> createCourse(@RequestBody CourseDto coursedto) {
+		courseService.createCourse(coursedto);
+		return ResponseEntity.status(HttpStatus.CREATED).body("course Created Successfully");
+	}
+
+	//@PreAuthorize("hasRole('ADMIN')")
+	@PostMapping("/author/createUser")
+	public ResponseEntity<String> createUser(@RequestBody UserDto userdto) {
+		return ResponseEntity.status(HttpStatus.CREATED).body("user created successfully");
+	}
+
+	@GetMapping
+	public ResponseEntity<CourseEntity> getCourseById(@PathVariable long courseId) {
+		CourseEntity courseDTO = courseService.getCourseById(courseId);
+		if (courseDTO != null) {
+			return ResponseEntity.ok(courseDTO);
+		} else {
+			return ResponseEntity.notFound().build();
+		}
 	}
 
 }
