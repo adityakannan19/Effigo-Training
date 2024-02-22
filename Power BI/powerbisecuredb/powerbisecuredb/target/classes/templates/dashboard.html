@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Power BI Embedded</title>
+    <script src="https://microsoft.github.io/PowerBI-JavaScript/dist/powerbi.js"></script>
+</head>
+<body>
+	<h1>Power BI Embedded</h1>
+	<form id="tokenForm">
+        <label for="token">Token:</label><br>
+        <input type="text" id="token" name="token" required><br><br>
+        <button type="button" onclick="validateAndEmbedReport()">Get Report</button>
+    </form>
+    
+    <div id="reportContainer">
+        <!-- Embedded Power BI report will be displayed here -->
+    </div>
+    
+     <script>
+        function validateAndEmbedReport() {
+            var token = document.getElementById("token").value;
+            
+            // Validate the token
+            fetch('/validate-token?token=' + token)
+                .then(response => {
+                    if (response.ok) {
+                        // Token is valid, embed report
+                        embedReport(token);
+                    } else {
+                        // Token is invalid, show error message
+                        alert('Invalid token');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to validate token');
+                });
+        }
+
+        function embedReport(token) {
+        	 fetch('/get-iframe')
+             .then(response => {
+                 if (response.ok) {
+                     return response.text();
+                 } else {
+                     throw new Error('Failed to retrieve iframe string');
+                 }
+             })
+             .then(iframeString => {
+                 // Inject the iframe string into the DOM
+                 document.getElementById('reportContainer').innerHTML = iframeString;
+             })
+             .catch(error => {
+                 console.error('Error:', error);
+                 alert('Failed to retrieve iframe string. Please try again.');
+             });
+        }
+    </script>
+</body>
+</html>
+
