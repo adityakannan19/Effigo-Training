@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Token</title>
+</head>
+<body>
+    <h2>Add Token</h2>
+    <form id="tokenForm">
+        <label for="token">Token:</label><br>
+        <input type="text" id="token" name="token" required><br>
+        <label for="expirationTime">Expiration Time:</label><br>
+        <input type="datetime-local" id="expirationTime" name="expirationTime" required><br><br>
+        <button type="submit">Add Token</button>
+    </form>
+
+    <script>
+        document.getElementById("tokenForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            // Get form data
+            var formData = {
+                token: document.getElementById("token").value,
+                expirationTime: new Date(document.getElementById("expirationTime").value).getTime() // Convert to timestamp
+            };
+
+            // Send POST request to add-token endpoint
+            fetch('/add-token', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to add token');
+                }
+                alert('Token added successfully');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to add token. Please try again.');
+            });
+        });
+    </script>
+</body>
+</html>

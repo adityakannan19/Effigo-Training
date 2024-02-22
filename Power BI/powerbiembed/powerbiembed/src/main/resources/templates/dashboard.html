@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Power BI Embedded</title>
+    <script src="https://microsoft.github.io/PowerBI-JavaScript/dist/powerbi.js"></script>
+</head>
+<body>
+	<h1>Power BI Embedded</h1>
+    <div id="reportContainer" style="height: 600px;">
+        <iframe title="Procurement Analytics" width="1140" height="541.25" th:src="@{'https://app.powerbi.com/reportEmbed?reportId=2805b83e-f7c5-41c2-901a-e48766a9b0a1&autoAuth=true&embeddedDemo=true&token=' + ${token}}" frameborder="0" allowFullScreen="true"></iframe>
+    </div>
+
+</body>
+</html>
+
