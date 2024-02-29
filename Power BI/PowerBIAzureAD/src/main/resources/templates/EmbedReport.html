@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Embedded Power BI report</title>
+    <base th:href="@{/}" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <link th:href="@{/style.css}" rel="stylesheet" />
+</head>
+<body>
+<header class="embed-container col-lg-12 col-md-12 col-sm-12 shadow">
+    <div>
+        Power BI Embedded
+    </div>
+</header>
+<main class="row">
+    <!--section id="text-container" class="embed-container col-lg-4 col-md-4 col-sm-4 mb-5 ml-5 mt-5">
+        <div>
+            <div>
+                This sample is developed using Spring MVC framework.<br/>
+                In order to see a different report, make changes to the <i> Config.java </i> file.<br/>
+            </div>
+            <div>Code is present in the following files:
+                <ol>
+                    <li>controllers/EmbedController.java</li>
+                    <li>services/AzureADService.java</li>
+                    <li>services/PowerBIService.java</li>
+                    <li>EmbedReport.jsp</li>
+                </ol>
+            </div>
+        </div>
+    </section-->	
+    <section id="report-container" class="embed-container col-lg-offset-4 col-lg-7 col-md-offset-5 col-md-7 col-sm-offset-5 col-sm-7 mt-5"></section>
+    <!-- Used to display report embed error message -->
+    <section class="error-container m-5"></section>
+</main>
+<!--footer class="embed-container col-lg-12 col-md-12 col-sm-12 mb-0 mt-4 text-center">
+    For Live demo and more code samples please visit
+    <a href="https://aka.ms/EmbeddedPlayground">https://aka.ms/EmbeddedPlayground</a>
+    <br>
+    For JavaScript API, please visit
+    <a href="https://aka.ms/PowerBIjs">https://aka.ms/PowerBIjs</a>
+</footer -->
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+<!-- powerbi-client v2.10.3 -->
+<script th:src="@{/powerbi.min.js}"></script>
+<script th:inline="javascript">
+    $(function () {
+    	console.log("Inside document ready function");
+        var models = window['powerbi-client'].models;
+        var reportContainer = $("#report-container").get(0);
+        powerbi.bootstrap(reportContainer, { type: "report" });
+        $.ajax({
+            type: "GET",
+            url: "/getembedinfo",
+            dataType: "json",
+            success: function (embedData) {
+                var reportLoadConfig = {
+                    type: "report",
+                    tokenType: models.TokenType.Embed,
+                    accessToken: embedData.embedToken,
+                    embedUrl: embedData.embedReports[0].embedUrl
+                };
+                var tokenExpiry = embedData["tokenExpiry"];
+                var report = powerbi.embed(reportContainer, reportLoadConfig);
+                report.on("loaded", function () {
+                    console.log("Report load successful");
+                });
+                report.on("rendered", function () {
+                    console.log("Report render successful");
+                });
+                report.off("error");
+                report.on("error", function (event) {
+                    var errorMsg = event.detail;
+                    console.error(errorMsg);
+                    return;
+                });
+            },
+            error: function (err) {
+                $(".embed-container").hide();
+                var errorContainer = $(".error-container");
+                errorContainer.show();
+                var errMessageHtml = "<strong> Error Details: </strong> <br/>";
+                errMessageHtml += err.responseText.split("\n").join("<br/>");
+                errorContainer.html(errMessageHtml);
+            }
+        });
+    });
+</script>
+</body>
+</html>
