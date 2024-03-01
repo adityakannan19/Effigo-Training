@@ -17,17 +17,9 @@ import lombok.Data;
 @Service
 public class CourseService {
 
-	//	public CourseService(CourseRepository courseRepository) {
-	//		super();
-	//		this.courseRepository = courseRepository;
-	//	}
-
 	private final CourseRepository courseRepository;
 
-	private static final Logger logger = LoggerFactory.getLogger(CourseService.class);
-
 	public Course saveCourse(Course course) {
-
 		course.setCreatedOn(LocalDateTime.now());
 		course.setUpdatedOn(LocalDateTime.now());
 		return courseRepository.save(course);
@@ -69,8 +61,6 @@ public class CourseService {
 	}
 
 	public List<Course> GetAllJavaCourses(String name) {
-
-		logger.info(" Fetched ");
 		return courseRepository.findAllJavaCourses(name);
 	}
 
